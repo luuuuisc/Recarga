@@ -19,11 +19,13 @@ public class PaymentService {
 
 
     public Payment saveOrUpdatePayment(Payment payment) {
+
         return paymentRepository.save(payment);
     }
 
 
     public Optional<Payment> findPaymentById(Long id) {
+
         return paymentRepository.findById(id);
     }
 
@@ -33,24 +35,6 @@ public class PaymentService {
         return result.map(x -> new PaymentDTO(x));
     }
 
-
-    public PaymentDTO insert (PaymentDTO dto) {
-        Payment result = new Payment();
-        result.setId(dto.getId());
-        result.setAmount(dto.getAmount());
-
-        result = paymentRepository.save(result);
-        return new PaymentDTO(result);
-    }
-
-    @Transactional
-    public PaymentDTO update(Long id, PaymentDTO dto) {
-
-        Payment payment = paymentRepository.getReferenceById(id);
-        payment.setId(dto.getId());
-        payment.setAmount(dto.getAmount());
-        return new PaymentDTO(payment);
-    }
 
 
     public void deletePayment(Long id) {

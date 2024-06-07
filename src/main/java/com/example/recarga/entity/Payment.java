@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
+@Table(name = "tb_payment")
 public class Payment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -13,7 +14,7 @@ public class Payment {
 
 
     private PaymentMethod paymentMethod;
-    // Getters and setters
+
 
     @OneToOne(mappedBy = "payment", cascade = CascadeType.ALL)
     private Recharge recharge;

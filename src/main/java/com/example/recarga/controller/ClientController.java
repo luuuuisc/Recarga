@@ -12,7 +12,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 
 @RestController
-@RequestMapping("/client")
+@RequestMapping(value = "/client")
 public class ClientController {
 
     @Autowired
@@ -30,7 +30,7 @@ public class ClientController {
         return ResponseEntity.ok(dto);
     }
 
-    @PostMapping
+    @PostMapping(value = "/insert")
     public ResponseEntity<ClientDTO> insert (@RequestBody ClientDTO dto) {
         dto = service.insert(dto);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")

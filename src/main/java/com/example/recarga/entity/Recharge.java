@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "tb_recharge")
 public class Recharge {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,5 +43,25 @@ public class Recharge {
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setDateTime(LocalDateTime dateTime) {
+        this.dateTime = dateTime;
+    }
+
+    public void setStatus(StatusRecharge status) {
+        this.status = status;
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
+    }
+
+    public void setPayment(Payment payment) {
+        this.payment = payment;
     }
 }
