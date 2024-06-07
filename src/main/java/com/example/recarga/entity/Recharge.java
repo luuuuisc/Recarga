@@ -3,6 +3,7 @@ package com.example.recarga.entity;
 import com.example.recarga.enume.StatusRecharge;
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -11,6 +12,8 @@ public class Recharge {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
     private LocalDateTime dateTime;
 
     @Enumerated(EnumType.STRING)
@@ -20,6 +23,9 @@ public class Recharge {
     @ManyToOne
     @JoinColumn(name = "client_id")
     private Client client;
+
+    @Column(nullable = false)
+    private BigDecimal amount;
 
     @OneToOne
     @MapsId
@@ -63,5 +69,13 @@ public class Recharge {
 
     public void setPayment(Payment payment) {
         this.payment = payment;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
+
+    public BigDecimal getAmount() {
+        return amount;
     }
 }

@@ -18,6 +18,7 @@ public class RechargeService {
 
     // Realizar uma nova recarga
     public Recharge saveRecharge(Recharge recharge) {
+
         return rechargeRepository.save(recharge);
     }
 
@@ -33,6 +34,7 @@ public class RechargeService {
 
     // Buscar uma recarga pelo ID
     public Optional<Recharge> findRechargeById(Long id) {
+
         return rechargeRepository.findById(id);
     }
 
@@ -47,8 +49,9 @@ public class RechargeService {
         return null; // Ou lançar uma exceção personalizada se preferir
     }
 
-    // Deletar uma recarga
+
     public void deleteRecharge(Long id) {
+
         rechargeRepository.deleteById(id);
     }
 }
