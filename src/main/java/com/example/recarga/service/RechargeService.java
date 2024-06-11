@@ -1,13 +1,15 @@
 package com.example.recarga.service;
 
+import com.example.recarga.dto.RechargeDTO;
 import com.example.recarga.entity.Recharge;
 import com.example.recarga.enume.StatusRecharge;
 import com.example.recarga.repository.RechargeRepository;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -16,42 +18,57 @@ public class RechargeService {
     @Autowired
     private RechargeRepository rechargeRepository;
 
-    // Realizar uma nova recarga
-    public Recharge saveRecharge(Recharge recharge) {
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
-        return rechargeRepository.save(recharge);
+
+    public void scheduleRecharge(RechargeDTO recharge) {
+        rabbitTemplate.convertAndSend("rechargeExchange", "recharge.request", recharge);
     }
 
-    // Buscar recargas por cliente
-    public List<Recharge> findRechargesByClientId(Long clientId) {
-        return rechargeRepository.findByClientId(clientId);
+    public RechargeDTO saveRecharge(RechargeDTO dto) {
+        Recharge recharge = new Recharge();
+        // Directly setting values from DTO
+        recharge.setAmount(dto.getAmount());
+        recharge.setDateTime(dto.getDateTime());
+        recharge.setStatus(dto.getStatus());
+        // Assume client is set elsewhere or is not required for this example
+
+        recharge = rechargeRepository.save(recharge);
+
+        // Immediately converting back to DTO for return
+        dto.setId(recharge.getId());
+        return dto;
     }
 
-    // Listar todas as recargas
-    public List<Recharge> findAllRecharges() {
-        return rechargeRepository.findAll();
+    public RechargeDTO findById(Long id) {
+        return rechargeRepository.findById(id)
+                .map(recharge -> {
+                    RechargeDTO dto = new RechargeDTO();
+                    dto.setId(recharge.getId());
+                    dto.setAmount(recharge.getAmount());
+                    dto.setDateTime(recharge.getDateTime());
+                    dto.setStatus(recharge.getStatus());
+                    return dto;
+                })
+                .orElse(null);
     }
 
-    // Buscar uma recarga pelo ID
-    public Optional<Recharge> findRechargeById(Long id) {
-
-        return rechargeRepository.findById(id);
+    public List<RechargeDTO> findAll() {
+        return rechargeRepository.findAll().stream()
+                .map(recharge -> {
+                    RechargeDTO dto = new RechargeDTO();
+                    dto.setId(recharge.getId());
+                    dto.setAmount(recharge.getAmount());
+                    dto.setDateTime(recharge.getDateTime());
+                    dto.setStatus(recharge.getStatus());
+                    return dto;
+                })
+                .collect(Collectors.toList());
     }
 
-    // Atualizar o status de uma recarga
-    public Recharge updateRechargeStatus(Long id, StatusRecharge newStatus) {
-        Optional<Recharge> recharge = findRechargeById(id);
-        if (recharge.isPresent()) {
-            Recharge updatedRecharge = recharge.get();
-            updatedRecharge.setStatus(newStatus);
-            return saveRecharge(updatedRecharge);
-        }
-        return null; // Ou lançar uma exceção personalizada se preferir
-    }
-
-
-    public void deleteRecharge(Long id) {
-
+    public void delete(Long id) {
         rechargeRepository.deleteById(id);
     }
 }
+
